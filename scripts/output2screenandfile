@@ -50,22 +50,57 @@ VIDEOFORMAT=$VIDEOBGRA', width=(int)'$system_width', height=(int)'$system_height
 OUTPUTFORMAT=$VIDEOBGRA', width=(int)'$system_width', height=(int)'$system_height
 #OUTPUTFORMAT=$VIDEOBGRA', width=853, height=480'
 SNOWMIXVIDEOSRC=shmsrc
-while [ $(ps -e | grep "snowmix" | wc -l) != 0 ]; do
-    echo "
-    $gstlaunch -v $SNOWMIXVIDEOSRC socket-path=$ctrsocket do-timestamp=true is-live=true ! \
-    queue leaky=2 max-size-buffers=2 ! \
-    $VIDEOFORMAT            ! \
-    videoscale      ! \
-    $OUTPUTFORMAT   ! \
-    $VIDEOCONVERT   ! \
-    autovideosink"
 
-    $gstlaunch -v $SNOWMIXVIDEOSRC socket-path=$ctrsocket do-timestamp=true is-live=true ! \
-    queue leaky=2 max-size-buffers=2 ! \
-    $VIDEOFORMAT            ! \
-    videoscale      ! \
-    $OUTPUTFORMAT   ! \
-    $VIDEOCONVERT   ! \
-    autovideosink
-    sleep 2
+if [ X$1 = X ] ; then
+    echo Failed to get path to directory for saving files
+    exit 1
+fi
+
+i=0
+file="$1/studio-$(date +%Y-%m-%d-%H:%M:%S)-$i.avi"
+while [ $(ps -e | grep "snowmix" | wc -l) != 0 ]; do
+    if [ -f "$file" ]; then
+        i=`expr $i + 1`
+        file="$1/studio-$(date +%Y-%m-%d-%H:%M)-$i.avi"
+    else
+        echo "
+        $gstlaunch -v $SNOWMIXVIDEOSRC socket-path=$ctrsocket do-timestamp=true is-live=true ! \
+        tee name=repeat ! \
+        queue leaky=2 max-size-buffers=2 ! \
+        $VIDEOFORMAT    ! \
+        videoscale      ! \
+        $OUTPUTFORMAT   ! \
+        $VIDEOCONVERT   ! \
+        autovideosink   \
+        repeat.         ! \
+        queue leaky=2   ! \
+        $VIDEOFORMAT    ! \
+        videoscale      ! \
+        $OUTPUTFORMAT   ! \
+        $VIDEOCONVERT   ! \
+        x264enc bitrate=2000 tune=zerolatency speed-preset=5 ! \
+        avimux          ! \
+        queue           ! \
+        filesink sync=false location=$file"
+
+        $gstlaunch -v $SNOWMIXVIDEOSRC socket-path=$ctrsocket do-timestamp=true is-live=true ! \
+        tee name=repeat ! \
+        queue leaky=2 max-size-buffers=2 ! \
+        $VIDEOFORMAT    ! \
+        videoscale      ! \
+        $OUTPUTFORMAT   ! \
+        $VIDEOCONVERT   ! \
+        autovideosink   \
+        repeat.         ! \
+        queue leaky=2   ! \
+        $VIDEOFORMAT    ! \
+        videoscale      ! \
+        $OUTPUTFORMAT   ! \
+        $VIDEOCONVERT   ! \
+        x264enc bitrate=2000 tune=zerolatency speed-preset=5 ! \
+        avimux          ! \
+        queue           ! \
+        filesink sync=false location=$file
+        sleep 2
+    fi
 done

@@ -13,7 +13,7 @@ snowmix $BASE_DIR/snowmix.cfg &
 
 # hdmi coder
 $BASE_DIR/rtsp2feed 1 0 "rtsp://admin:Supervisor@192.168.15.239:554/0" &
-$BASE_DIR/rtsp2feed 1 0 "rtsp://admin:Supervisor@192.168.15.42:554/Streaming/Channels/101?transportmode=unicast&profile=Profile_1" &
+#$BASE_DIR/rtsp2feed 1 0 "rtsp://admin:Supervisor@192.168.15.42:554/Streaming/Channels/101?transportmode=unicast&profile=Profile_1" &
 #$BASE_DIR/rtsp2feed 1 0 "rtsp://admin:12345@192.168.15.53:554/ISAPI/Streaming/Channels/101" &
 #$BASE_DIR/rtsp2feed 1 0 "rtsp://192.168.15.84:554/onvif0" &
 #$BASE_DIR/rtsp2feed 1 0 "rtsp://192.168.15.11:554/stream" &
@@ -25,11 +25,9 @@ $BASE_DIR/rtsp2feed 1 0 "rtsp://admin:Supervisor@192.168.15.42:554/Streaming/Cha
 #$BASE_DIR/rtsp2feed 2 0 "rtsp://192.168.15.52:554/live/av0" &
 $BASE_DIR/rtsp2feed 2 0 "rtsp://192.168.15.52:554/live/av0" 17 27 13 &
 
-#start gui
-$BASE_DIR/output2screen &
-
-#record to file
-#$BASE_DIR/output2file /home/studio/videos &
+#start gui with or not record to file
+#$BASE_DIR/output2screen &
+$BASE_DIR/output2screenandfile /home/studio/videos &
 
 while [ $(ps -e | grep "snowmix" | wc -l) != 0 ]; do
     sleep 1
