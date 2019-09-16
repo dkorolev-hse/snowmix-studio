@@ -1,0 +1,71 @@
+#!/bin/bash
+
+BASE_DIR=$(dirname $(readlink -e $0))
+
+# set vars
+. $BASE_DIR/snowmix_env
+
+play_checked=0
+aseqdump -p "WORLDE easy pad" | \
+while IFS=" ," read src ev1 ev2 ch label1 data1 label2 data2 rest; do
+    case "$ev1 $ev2 $data1" in
+        "Note on 39" ) echo "tcl eval SceneSetState 1 1 0" | nc $SNOWMIX_IP $SNOWMIX_PORT -q 0 2>&1; echo "Set scene 1" ;; #pad 1
+        "Note on 48" ) echo "tcl eval SceneSetState 2 1 0" | nc $SNOWMIX_IP $SNOWMIX_PORT -q 0 2>&1; echo "Set scene 2" ;; #pad 2
+        "Note on 45" ) echo "tcl eval SceneSetState 3 1 0" | nc $SNOWMIX_IP $SNOWMIX_PORT -q 0 2>&1; echo "Set scene 3" ;; #pad 3
+        "Note on 43" ) echo Pad 4 pressed ;;
+        "Note on 51" ) echo Pad 5 pressed ;;
+        "Note on 49" ) echo Pad 6 pressed ;;
+        "Note on 36" ) echo Pad 7 pressed ;;
+        "Note on 38" ) echo Pad 8 pressed ;;
+        "Note on 40" ) echo Pad 9 pressed ;;
+        "Note on 42" ) echo Pad 10 pressed ;;
+        "Note on 44" ) echo Pad 11 pressed ;;
+        "Note on 46" ) echo Pad 12 pressed ;;
+
+        "Note on 1" ) echo Bottom left button pressed ;;
+        "Note on 2" ) echo Bottom right button pressed ;;
+
+        "Control change 49" )
+        if [ $data2 -eq 127 ]
+        then 
+            echo Rewind button pressed 
+        fi ;;
+
+        "Control change 47" )
+        if [ $data2 -eq 127 ]
+        then 
+            echo Backward button pressed
+        fi ;;
+
+        "Control change 48" )
+        if [ $data2 -eq 127 ]
+        then 
+            echo Forward button pressed
+        fi ;;
+
+        "Control change 44" )
+        if [ $data2 -eq 127 ]
+        then 
+            echo Record button pressed 
+        fi ;;
+
+        "Control change 46" )
+        if [ $data2 -eq 127 ]
+        then 
+            echo Stop button pressed
+            studio_stop #stop button
+            play_checked=0
+        fi ;;
+
+        "Control change 45" )
+        if [ $data2 -eq 127 ]
+        then
+            echo Play button pressed
+            if [ $play_checked = 0 ]
+            then    
+                xfce4-terminal -e "studio_start" & #play button
+                play_checked=1
+            fi
+        fi ;;
+    esac
+done

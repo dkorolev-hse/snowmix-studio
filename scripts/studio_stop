@@ -1,0 +1,16 @@
+#!/bin/bash
+
+BASE_DIR=$(dirname $(readlink -e $0))
+
+# set vars
+. $BASE_DIR/snowmix_env
+
+# exit snowmix
+echo "quit" | nc $SNOWMIX_IP $SNOWMIX_PORT
+
+# exit input gstreamer
+killall -9 gst-launch-1.0
+
+# clear feeds and mixers
+rm -f /tmp/feed?-control-pipe*
+rm -f /tmp/mixer?

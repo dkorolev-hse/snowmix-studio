@@ -1,0 +1,3 @@
+export SNOWMIX=/usr/local/lib/Snowmix-0.5.1
+export SNOWMIX_IP=127.0.0.1
+export SNOWMIX_PORT=8855

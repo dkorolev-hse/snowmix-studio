@@ -1,0 +1,36 @@
+#!/bin/bash
+
+BASE_DIR=$(dirname $(readlink -e $0))
+echo $(readlink -e $0)
+echo $(dirname $(readlink -e $0))
+echo $BASE_DIR
+
+# set vars
+. $BASE_DIR/snowmix_env
+
+# start snowmix
+snowmix $BASE_DIR/snowmix.cfg &
+
+# hdmi coder
+$BASE_DIR/rtsp2feed 1 0 "rtsp://admin:Supervisor@192.168.15.239:554/0" &
+$BASE_DIR/rtsp2feed 1 0 "rtsp://admin:Supervisor@192.168.15.42:554/Streaming/Channels/101?transportmode=unicast&profile=Profile_1" &
+#$BASE_DIR/rtsp2feed 1 0 "rtsp://admin:12345@192.168.15.53:554/ISAPI/Streaming/Channels/101" &
+#$BASE_DIR/rtsp2feed 1 0 "rtsp://192.168.15.84:554/onvif0" &
+#$BASE_DIR/rtsp2feed 1 0 "rtsp://192.168.15.11:554/stream" &
+
+# ip cam with alpha
+#$BASE_DIR/rtsp2feed 2 0 "rtsp://admin:Supervisor@192.168.15.47:554/cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif" 19 49 46 &
+#$BASE_DIR/rtsp2feed 2 0 "rtsp://admin:Supervisor@192.168.15.43:554/Streaming/Channels/1" 19 49 46 &
+#$BASE_DIR/rtsp2feed 2 0 "rtsp://192.168.15.42:554/Streaming/Channels/101?transportmode=unicast&profile=Profile_1" &
+#$BASE_DIR/rtsp2feed 2 0 "rtsp://192.168.15.52:554/live/av0" &
+$BASE_DIR/rtsp2feed 2 0 "rtsp://192.168.15.52:554/live/av0" 17 27 13 &
+
+#start gui
+$BASE_DIR/output2screen &
+
+#record to file
+#$BASE_DIR/output2file /home/studio/videos &
+
+while [ $(ps -e | grep "snowmix" | wc -l) != 0 ]; do
+    sleep 1
+done
