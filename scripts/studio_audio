@@ -10,7 +10,7 @@ echo $BASE_DIR
 
 ( 
 echo 'audio feed ctr isaudio 1'
-/usr/bin/gst-launch-1.0 -q alsasrc device=sysdefault:CARD=Headset ! queue ! audioresample ! audioconvert ! audio/x-raw, format=S16LE, rate=44100, channels=2 ! fdsink fd=3 sync=true 3>&1 1>&2) | nc $SNOWMIX_IP $SNOWMIX_PORT
+/usr/bin/gst-launch-1.0 -q alsasrc device=iec958:CARD=U24BIT,DEV=0 ! queue ! audioresample ! audioconvert ! audio/x-raw, format=S16LE, rate=44100, channels=2 ! fdsink fd=3 sync=true 3>&1 1>&2) | nc $SNOWMIX_IP $SNOWMIX_PORT
 
 while [ $(ps -e | grep "snowmix" | wc -l) != 0 ]; do
     sleep 1
