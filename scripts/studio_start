@@ -12,10 +12,10 @@ echo $BASE_DIR
 snowmix $BASE_DIR/snowmix.cfg &
 
 # hdmi coder
-$BASE_DIR/rtsp2feed 1 0 "rtsp://admin:Supervisor@192.168.15.239:554/0" &
+#$BASE_DIR/rtsp2feed 1 0 "rtsp://admin:Supervisor@192.168.15.239:554/0" &
 #$BASE_DIR/rtsp2feed 1 0 "rtsp://admin:Supervisor@192.168.15.42:554/Streaming/Channels/101?transportmode=unicast&profile=Profile_1" &
 #$BASE_DIR/rtsp2feed 1 0 "rtsp://admin:12345@192.168.15.53:554/ISAPI/Streaming/Channels/101" &
-#$BASE_DIR/rtsp2feed 1 0 "rtsp://192.168.15.84:554/onvif0" &
+$BASE_DIR/rtsp2feed 1 0 "rtsp://192.168.15.84:554/onvif0" &
 #$BASE_DIR/rtsp2feed 1 0 "rtsp://192.168.15.11:554/stream" &
 
 # ip cam with alpha

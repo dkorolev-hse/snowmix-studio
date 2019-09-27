@@ -129,24 +129,24 @@ while [ $(ps -e | grep "snowmix" | wc -l) != 0 ]; do
             echo "Audio feed id $audio_feed_id. Rate $feed_rate channels $feed_channels"
             echo "Snowmix ip $SNOWMIX_IP port $SNOWMIX_PORT"
             (
-                echo 'audio feed ctr isaudio '$audio_feed_id
-                $gstlaunch -q \
-                $SRC !\
-                $alpha \
-                queue ! videoscale ! videoconvert !\
-                $VIDEOFORMAT            !\
-                queue ! $SHMSINK1 decoder.  !\
-                queue ! audioconvert        !\
-                audioresample ! $AUDIOFORMAT    !\
+                echo "audio feed ctr isaudio $audio_feed_id"
+                $gstlaunch -q                         \
+                $SRC                                ! \
+                $alpha                                \
+                queue ! videoscale ! videoconvert   ! \
+                $VIDEOFORMAT                        ! \
+                queue ! $SHMSINK1 decoder.          ! \
+                queue ! audioconvert                ! \
+                audioresample ! $AUDIOFORMAT        ! \
                 fdsink fd=3 sync=true 3>&1 1>&2
             ) | nc $SNOWMIX_IP $SNOWMIX_PORT
         else
             echo "Video only. src = $src_type"
-            $gstlaunch -q \
-            $SRC !\
-            $alpha \
-            queue ! videoscale ! videoconvert !\
-            $VIDEOFORMAT    !\
+            $gstlaunch -q                         \
+            $SRC                                ! \
+            $alpha                                \
+            queue ! videoscale ! videoconvert   ! \
+            $VIDEOFORMAT                        ! \
             queue ! $SHMSINK1
         fi
     else
