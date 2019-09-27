@@ -4,6 +4,7 @@
 
 BASE_DIR=$(dirname $(readlink -e $0))
 
+sudo apt-get install gstreamer1.0-alsa -y
 sudo apt-get install alsa-utils -y
 sudo apt-get install netcat -y
 sudo apt-get install psmisc -y

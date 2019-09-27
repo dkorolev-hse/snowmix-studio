@@ -1,0 +1,17 @@
+#!/bin/bash
+
+BASE_DIR=$(dirname $(readlink -e $0))
+echo $(readlink -e $0)
+echo $(dirname $(readlink -e $0))
+echo $BASE_DIR
+
+# set vars
+. $BASE_DIR/snowmix_env
+
+( 
+echo 'audio feed ctr isaudio 1'
+/usr/bin/gst-launch-1.0 -q alsasrc device=sysdefault:CARD=Headset ! queue ! audioresample ! audioconvert ! audio/x-raw, format=S16LE, rate=44100, channels=2 ! fdsink fd=3 sync=true 3>&1 1>&2) | nc $SNOWMIX_IP $SNOWMIX_PORT
+
+while [ $(ps -e | grep "snowmix" | wc -l) != 0 ]; do
+    sleep 1
+done
